@@ -3,12 +3,12 @@ module.exports = {
   darkMode: false,
   theme: {
     screens: {
-      "mobile-m": "321px",
-      "mobile-l": "376px",
-      "tablet": "426px",
-      "desktop-s": "769px",
-      "desktop-m": "1025px",
-      "desktop-l": "1367px",
+      "mobile-m": "320px",
+      "mobile-l": "375px",
+      "tablet": "425px",
+      "desktop-s": "768px",
+      "desktop-m": "1024px",
+      "desktop-l": "1366px",
       "desktop-xl": "1600px",
     },
     extend: {},
