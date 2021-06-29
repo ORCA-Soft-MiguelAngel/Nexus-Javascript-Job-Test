@@ -1,7 +1,7 @@
-import React, { LegacyRef, MutableRefObject, useEffect, useRef } from "react";
-import box_img from "../../Images/item_box.svg";
+import React, { useEffect, useRef } from "react";
 import { FaTimes } from "react-icons/fa";
-import { nodeModuleNameResolver } from "typescript";
+import box_img from "../../Images/item_box.svg";
+import ItemStore from "../../Stores/ItemStore";
 
 interface props {
   showModal: boolean;
@@ -9,6 +9,9 @@ interface props {
 }
 
 const ItemModal: React.FC<props> = ({ showModal, setShowModal }) => {
+  //GLOBAL STATES
+  const { item } = ItemStore;
+
   //EFFECTS
   //Initial effect to listen outside clicks
   useEffect(() => {
@@ -27,6 +30,9 @@ const ItemModal: React.FC<props> = ({ showModal, setShowModal }) => {
   const handleCloseModal = (e: any) => {
     if (node && node.current && !node.current.contains(e.target)) {
       setShowModal(false);
+      setTimeout(() => {
+        ItemStore.removeItem();
+      }, 100);
     }
   };
 
@@ -59,25 +65,25 @@ const ItemModal: React.FC<props> = ({ showModal, setShowModal }) => {
           {/**Table */}
           <div>
             <div className="text-center font-semibold mb-2 text-lg">
-              Television 32 pulgadas
+              {item?.description}
             </div>
             <div className="mb-2">
-              <b>Weight:</b> <span>30.0 Lbs</span>
+              <b>Weight:</b> <span>{item?.weight}</span> Lbs
             </div>
             <div className="mb-2">
-              <b>Balance:</b> <span>2154.2</span>
+              <b>Balance:</b> <span>{item?.priceToPay}</span>
             </div>
             <div className="mb-2">
-              <b>Supplier:</b> <span>Amazon</span>
+              <b>Supplier:</b> <span>{item?.supplier}</span>
             </div>
             <div className="mb-2">
-              <b>Courier:</b> <span>USPS</span>
+              <b>Courier:</b> <span>{item?.courier}</span>
             </div>
             <div className="mb-2">
-              <b>Courier Tracking:</b> <span>USPS123456789</span>
+              <b>Courier Tracking:</b> <span>{item?.courierTracking}</span>
             </div>
             <div className="mb-2">
-              <b>Internal Tracking:</b> <span>NX-U123456789</span>
+              <b>Internal Tracking:</b> <span>{item?.internalTracking}</span>
             </div>
           </div>
           {/**Close Btn */}

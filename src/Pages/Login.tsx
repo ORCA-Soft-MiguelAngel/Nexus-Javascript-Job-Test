@@ -3,23 +3,28 @@ import { BiWorld } from "react-icons/bi";
 import bg from "../Images/login_bg.jpg";
 import { PulseLoader } from "react-spinners";
 import { FaTimes } from "react-icons/fa";
+import { useHistory } from "react-router-dom";
+import useAuth from "../Hooks/useAuth";
 
-interface LoginForm {
-  username: string;
-  password: string;
-}
+import UserStore from "../Stores/UserStore";
+import { authServices } from "../ApiRoutes/Fetch";
+import { LoginRequest } from "../ApiRoutes/FetchTypes/authTypes";
 
 const Login: React.FC = () => {
+  //CUSTOM HOOKS & VARIABLES
+  const { login } = useAuth();
+  const history = useHistory();
+
   //STATES
   //Form values
-  const [loginForm, setLoginForm] = useState<LoginForm>({
+  const [loginForm, setLoginForm] = useState<LoginRequest>({
     username: "",
     password: "",
   });
   //Loading state
   const [loading, setLoading] = useState<boolean>(false);
   //alert state
-  const [showAlert, setShowAlert] = useState<boolean>(true);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   //HANDLERS
   //Handler when you change inputs
@@ -29,15 +34,24 @@ const Login: React.FC = () => {
       [e.currentTarget.id]: e.currentTarget.value,
     });
   };
+
   //Handle to close the alert
   const handleCloseAlert = () => setShowAlert(false);
+
   //Handler when you submit the login
-  const handleLogin = () => {
+  const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowAlert(false);
     setLoading(true);
-    setShowAlert(true);
-    setTimeout(() => {
+
+    const result = await login(loginForm);
+
+    if (result) {
+      window.location.reload();
+    } else {
+      setShowAlert(true);
       setLoading(false);
-    }, 3000);
+    }
   };
 
   return (
@@ -86,6 +100,7 @@ const Login: React.FC = () => {
                 className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
               />
             </div>
+
             <div className="mt-10">
               <button
                 onClick={handleLogin}

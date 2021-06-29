@@ -1,10 +1,20 @@
 import React from "react";
+import { PackageResponse } from "../../ApiRoutes/FetchTypes/packageTypes";
 
 interface props {
-  handleMoreInfo: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  handleMoreInfo: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    p: PackageResponse
+  ) => void;
+  packages: PackageResponse[];
+  loaded: boolean;
 }
 
-const PackageTable: React.FC<props> = ({ handleMoreInfo }) => {
+const PackageTable: React.FC<props> = ({
+  handleMoreInfo,
+  packages,
+  loaded,
+}) => {
   return (
     <table className="w-full">
       <thead className="justify-between text-sm desktop-s:text-lg">
@@ -31,25 +41,55 @@ const PackageTable: React.FC<props> = ({ handleMoreInfo }) => {
         </tr>
       </thead>
       <tbody className="bg-gray-200 text-sm desktop-s:text-lg">
-        <tr className="bg-white border-b-2 border-gray-400">
-          <td className="py-2 text-center">
-            <b>Television 32 pulgadas</b>
-          </td>
-          <td className="hidden desktop-m:table-cell text-center">Amazon</td>
-          <td className="hidden desktop-m:table-cell text-center">USPS</td>
-          <td className="text-center">30.0 Lbs</td>
-          <td className="text-center">
-            <b>2154.2</b>
-          </td>
-          <td className="text-center py-2">
-            <button
-              onClick={(e) => handleMoreInfo(e)}
-              className="text-blue-800 font-semibold px-4 py-2 border rounded-md hover:bg-black transition-all hover:text-white "
-            >
-              <span className="hidden desktop-m:block">More</span> Info
-            </button>
-          </td>
-        </tr>
+        {loaded ? (
+          packages.length > 0 ? (
+            packages.map((pkg, i) => (
+              <tr
+                key={`item-${i + 1}`}
+                className="bg-white border-b-2 border-gray-400"
+              >
+                <td className="py-2 text-center">
+                  <b>{pkg.description}</b>
+                </td>
+                <td className="hidden desktop-m:table-cell text-center">
+                  {pkg.supplier}
+                </td>
+                <td className="hidden desktop-m:table-cell text-center">
+                  {pkg.courier}
+                </td>
+                <td className="text-center">
+                  <span>{pkg.weight}</span> Lbs
+                </td>
+                <td className="text-center">
+                  <b>{pkg.priceToPay}</b>
+                </td>
+                <td className="text-center py-2">
+                  <button
+                    onClick={(e) => handleMoreInfo(e, pkg)}
+                    className="text-blue-800 font-semibold px-4 py-2 border rounded-md hover:bg-black transition-all hover:text-white "
+                  >
+                    Info
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={6}
+                className="h-12 text-lg text-gray-500 text-center"
+              >
+                There are no pending packages.
+              </td>
+            </tr>
+          )
+        ) : (
+          <tr>
+            <td colSpan={6} className="h-12 text-lg text-gray-500 text-center">
+              Loading Packages...
+            </td>
+          </tr>
+        )}
       </tbody>
     </table>
   );

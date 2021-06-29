@@ -3,13 +3,24 @@ import { Link } from "react-router-dom";
 import { FaGripLines, FaTimes, FaRegUserCircle } from "react-icons/fa";
 import { BiLogOut, BiWorld } from "react-icons/bi";
 import { FiPackage } from "react-icons/fi";
+import UserStore from "../../Stores/UserStore";
+import useAuth from "../../Hooks/useAuth";
 
 const Menu: React.FC = () => {
+  //CUSTOM HOOKS
+  const { singout } = useAuth();
+
   //STATES
   const [mobileMenu, setMobileMenu] = useState<boolean>(false);
 
   //HANDLERS
+  //open the mobile menu
   const handleMobileMenu = () => setMobileMenu(!mobileMenu);
+
+  //Logout
+  const handleLogout = async () => {
+    singout() && window.location.reload();
+  };
 
   return (
     <div className=" bg-blue-600 text-white">
@@ -44,9 +55,12 @@ const Menu: React.FC = () => {
             </li>
             <li className="flex gap-2 justify-center items-center text-lg cursor-pointer px-3 border-r-2">
               <FaRegUserCircle />
-              <span>Full Name Of User</span>
+              <span>{UserStore.getUser().fullName}</span>
             </li>
-            <li className="flex gap-2 justify-center items-center text-lg cursor-pointer pl-3">
+            <li
+              onClick={handleLogout}
+              className="flex gap-2 justify-center items-center text-lg cursor-pointer pl-3"
+            >
               <BiLogOut />
               <span>Log Out</span>
             </li>
@@ -65,7 +79,10 @@ const Menu: React.FC = () => {
               <span>Packages</span>
             </li>
 
-            <li className="flex gap-2 items-center text-lg cursor-pointer py-3">
+            <li
+              onClick={handleLogout}
+              className="flex gap-2 items-center text-lg cursor-pointer py-3"
+            >
               <BiLogOut />
               <span>Log Out</span>
             </li>
