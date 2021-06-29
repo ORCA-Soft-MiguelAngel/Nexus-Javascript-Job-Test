@@ -51,7 +51,7 @@ const ItemModal: React.FC<props> = ({ showModal, setShowModal }) => {
         {/**ModalWrapper */}
         <div
           ref={node}
-          className="w-11/12 shadow-lg bg-white relative z-10 rounded-xl p-4 transition-all mx-auto"
+          className="w-11/12 desktop-m:w-2/3 desktop-l:w-1/3 shadow-lg bg-white relative z-10 rounded-xl p-4 transition-all mx-auto"
           style={{
             opacity: `${showModal ? 1 : 0}`,
             transform: `${
@@ -60,29 +60,29 @@ const ItemModal: React.FC<props> = ({ showModal, setShowModal }) => {
           }}
         >
           <div className="w-full flex justify-center items-center">
-            <img src={box_img} alt="Item" className="w-1/3 mt-4 mb-8" />
+            <img src={box_img} alt="Item" className="w-1/3 desktop-m:w-36 desktop-l:w-56 mt-4 mb-8" />
           </div>
           {/**Table */}
-          <div>
-            <div className="text-center font-semibold mb-2 text-lg">
+          <div className="desktop-m:text-2xl">
+            <div className="text-center font-semibold text-lg desktop-m:text-3xl">
               {item?.description}
             </div>
-            <div className="mb-2">
+            <div className="mb-2 desktop-m:8">
               <b>Weight:</b> <span>{item?.weight}</span> Lbs
             </div>
-            <div className="mb-2">
+            <div className="mb-2 desktop-m:8">
               <b>Balance:</b> <span>{item?.priceToPay}</span>
             </div>
-            <div className="mb-2">
+            <div className="mb-2 desktop-m:8">
               <b>Supplier:</b> <span>{item?.supplier}</span>
             </div>
-            <div className="mb-2">
+            <div className="mb-2 desktop-m:8">
               <b>Courier:</b> <span>{item?.courier}</span>
             </div>
-            <div className="mb-2">
+            <div className="mb-2 desktop-m:8">
               <b>Courier Tracking:</b> <span>{item?.courierTracking}</span>
             </div>
-            <div className="mb-2">
+            <div className="mb-2 desktop-m:8">
               <b>Internal Tracking:</b> <span>{item?.internalTracking}</span>
             </div>
           </div>

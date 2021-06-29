@@ -10,7 +10,6 @@ import useAuth from "./Hooks/useAuth";
 import Dashboard from "./Pages/Dashboard";
 import Loading from "./Pages/Loading";
 import Login from "./Pages/Login";
-import Tests from "./Pages/Tests";
 
 type AuthStatus = "auth" | "unauth" | "loading";
 
@@ -35,7 +34,6 @@ const App: React.FC = observer(() => {
     <Router>
       {auth !== "loading" ? (
         <Switch>
-          <Route exact path="/tests" component={Tests} />
           <Route exact path="/login">
             {auth === "auth" ? <Redirect to="/dashboard" /> : <Login />}
           </Route>

@@ -1,19 +1,15 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { BiWorld } from "react-icons/bi";
-import bg from "../Images/login_bg.jpg";
-import { PulseLoader } from "react-spinners";
 import { FaTimes } from "react-icons/fa";
-import { useHistory } from "react-router-dom";
-import useAuth from "../Hooks/useAuth";
-
-import UserStore from "../Stores/UserStore";
-import { authServices } from "../ApiRoutes/Fetch";
+import { PulseLoader } from "react-spinners";
 import { LoginRequest } from "../ApiRoutes/FetchTypes/authTypes";
+import useAuth from "../Hooks/useAuth";
+import bg from "../Images/login_bg.jpg";
 
 const Login: React.FC = () => {
   //CUSTOM HOOKS & VARIABLES
   const { login } = useAuth();
-  const history = useHistory();
 
   //STATES
   //Form values
@@ -25,10 +21,25 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   //alert state
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  //alert message
+  const [alertMessage, setAlertMessage] = useState<string>("Wrong Credentials");
 
   //HANDLERS
   //Handler when you change inputs
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const key = e.currentTarget.id;
+    const value = e.currentTarget.value;
+
+    //prevent special characters
+    if (value !== "" && !/^[a-zA-Z0-9_]+$/.test(value)) {
+      return;
+    }
+
+    //prevent username be longer than 10
+    if (key === "username" && value.length > 9) {
+      return;
+    }
+
     setLoginForm({
       ...loginForm,
       [e.currentTarget.id]: e.currentTarget.value,
@@ -38,9 +49,24 @@ const Login: React.FC = () => {
   //Handle to close the alert
   const handleCloseAlert = () => setShowAlert(false);
 
+  //handle ENTER Submit
+  const handleEnterKeyLogin = (e: any) => {
+    if (e.keyCode === 13) {
+      handleLogin(e);
+    }
+  };
+
   //Handler when you submit the login
   const handleLogin = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
+    //check attempts
+    if (failedAttempts(0)) {
+      setShowAlert(true);
+      setAlertMessage("You have exceeded the maximum number of attempts");
+      return;
+    }
+
     setShowAlert(false);
     setLoading(true);
 
@@ -49,15 +75,40 @@ const Login: React.FC = () => {
     if (result) {
       window.location.reload();
     } else {
+      if (failedAttempts(1)) {
+        //block login
+        setAlertMessage("You have exceeded the maximum number of attempts");
+      } else {
+        setAlertMessage("Wrong Credentials.");
+      }
       setShowAlert(true);
       setLoading(false);
     }
   };
 
+  //FUNCTIONS
+  //manage the failed attemps in session
+  const failedAttempts = (n: number): boolean => {
+    const attempts: number = sessionStorage.getItem("attempts")
+      ? Number(sessionStorage.getItem("attempts")) + n
+      : 1;
+
+    sessionStorage.setItem("attempts", `${attempts}`);
+
+    if (attempts > 3) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   return (
-    <div className="flex">
+    <div className="flex max-h-screen">
+      <Helmet>
+        <title>Courier | Login</title>
+      </Helmet>
       {/**first container */}
-      <div className="w-full desktop-m:w-1/2">
+      <div className="w-full desktop-m:w-1/2 desktop-l:w-5/12">
         <div className="py-12 bg-blue-100 flex justify-center">
           <span className="text-4xl">
             <BiWorld />
@@ -66,7 +117,7 @@ const Login: React.FC = () => {
             Courier
           </span>
         </div>
-        <div className="mt-10 desktop-l:mt-16 mx-auto px-10 desktop-s:w-3/4 desktop-m:w-full desktop-l:w-11/12">
+        <div className="mt-10 desktop-l:mt-28 mx-auto px-10 desktop-s:w-3/4">
           <h2
             className="text-center text-4xl text-blue-900 font-display font-semibold desktop-m:text-left desktop-m:text-5xl
                     desktop-m:text-bold"
@@ -98,6 +149,7 @@ const Login: React.FC = () => {
                 value={loginForm.password}
                 onChange={handleOnChange}
                 className="w-full text-lg py-2 border-b border-gray-300 focus:outline-none focus:border-blue-500"
+                onKeyPress={handleEnterKeyLogin}
               />
             </div>
 
@@ -120,7 +172,7 @@ const Login: React.FC = () => {
               className="mt-8 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
               role="alert"
             >
-              <span className="block sm:inline">Wrong credentials</span>
+              <span className="block sm:inline">{alertMessage}</span>
               <span
                 className="absolute top-0 bottom-0 right-0 px-4 py-3"
                 onClick={handleCloseAlert}
@@ -135,8 +187,8 @@ const Login: React.FC = () => {
         </div>
       </div>
       {/**second container */}
-      <div className="hidden desktop-m:block desktop-m:w-1/2">
-        <img src={bg} alt="background" />
+      <div className="hidden desktop-m:block desktop-m:w-1/2 desktop-l:w-7/12">
+        <img src={bg} alt="background" className="w-full" />
       </div>
     </div>
   );
