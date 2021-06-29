@@ -36,7 +36,7 @@ const Login: React.FC = () => {
     }
 
     //prevent username be longer than 10
-    if (key === "username" && value.length > 9) {
+    if (key === "username" && value.length > 10) {
       return;
     }
 
